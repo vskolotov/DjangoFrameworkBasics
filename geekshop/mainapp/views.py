@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from .models import ProductCategory, Product
 
 MENU_LINKS = [
     {
@@ -6,7 +7,7 @@ MENU_LINKS = [
         'name': 'домой'
     },
     {
-        'view_name': 'products',
+        'view_name': 'products_index',
         'name': 'продукты'
     },
     {
@@ -16,24 +17,8 @@ MENU_LINKS = [
 ]
 
 def index(request):
-    related_products = [
-        {
-            'name':'Светильник',
-            'description':'Очень яркий',
-            'img':'img/product-1.jpg'
-        },
-        {
-            'name':'Стулья',
-            'description':'Очень мягкие',
-            'img':'img/product-2.jpg'
-        },
-        {
-            'name':'Графин',
-            'description':'Очень прочный',
-            'img':'img/product-3.jpg'
-        }
-    ]
-    
+ 
+    related_products = Product.objects.all()[:3]
     return render(request, 'mainapp/index.html', 
     context={'title': 'главная', 
             'menu_links': MENU_LINKS,
@@ -66,34 +51,17 @@ def contact(request):
             'menu_links': MENU_LINKS,
             'contacts': contacts})
 
-def products(request):
-    product_menu = [
-        {'href': 'products', 'name': 'все'},
-        {'href': 'products#2', 'name': 'дом'},
-        {'href': 'products#3', 'name': 'офис'},
-        {'href': 'products#4', 'name': 'модерн'},
-        {'href': 'products#5', 'name': 'класика'},
-    ]
-
-    related_products = [
-        {
-            'name':'Светильник',
-            'description':'Очень яркий',
-            'img':'img/product-11.jpg'
-        },
-        {
-            'name':'Стул',
-            'description':'Очень мягкий',
-            'img':'img/product-21.jpg'
-        },
-        {
-            'name':'Лампа',
-            'description':'Очень экономичная',
-            'img':'img/product-31.jpg'
-        }
-    ]
+def products(request, pk=None):
+    if not pk:
+        selected_category = ProductCategory.objects.first()
+    else:
+        selected_category = get_object_or_404(ProductCategory, id=pk)
+    
+    categories = ProductCategory.objects.all()
+    products = Product.objects.filter(category=selected_category)
     return render(request, 'mainapp/products.html', 
     context={'title': 'продукты', 
             'menu_links': MENU_LINKS,
-            'product_menu': product_menu,
-            'related_products': related_products})
+            'categories': categories,
+            'selected_category': selected_category,
+            'products': products})

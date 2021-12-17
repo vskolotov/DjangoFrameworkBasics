@@ -1,12 +1,13 @@
 <div class="links clearfix">
     <ul class="links-menu">
-        {% for link in product_menu %}
+        {% for category in categories %}
         <li>
-            <a href="{{ link.href }}"
-                {% if request.resolver_match.url_name == link.href %}
+             <a href="{% url 'products' category.id %}"
+                {% if category.id == selected_category.id %}
                     class="active" 
-                {% endif %}>            
-            {{ link.name }}</a>
+                {% endif %}>             
+            {{ category.name }}
+        </a>
         </li>
     {% endfor %}
     </ul>
