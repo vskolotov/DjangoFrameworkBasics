@@ -7,7 +7,7 @@ MENU_LINKS = [
         'name': 'домой'
     },
     {
-        'view_name': 'products_index',
+        'view_name': 'products:index',
         'name': 'продукты'
     },
     {
