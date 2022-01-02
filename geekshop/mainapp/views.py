@@ -1,17 +1,26 @@
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+
+from cartapp.models import Cart
 from .models import ProductCategory, Product
 
 MENU_LINKS = [
     {
-        'view_name': 'index', 
+        'view_name': 'index',
+        'namespace': '',
+        'full_href': 'index', 
         'name': 'домой'
     },
     {
-        'view_name': 'products_index',
+        'view_name': 'index',
+        'namespace': 'products',
+        'full_href': 'products:index',
         'name': 'продукты'
     },
     {
         'view_name': 'contact', 
+        'namespace': '',
+        'full_href': 'contact',
         'name': 'контакты'
     }
 ]
@@ -52,16 +61,34 @@ def contact(request):
             'contacts': contacts})
 
 def products(request, pk=None):
+
+    cart = []
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user)
     if not pk:
-        selected_category = ProductCategory.objects.first()
+        selected_category = None
+        selected_category_dict = {'name':'Всё', 'href': reverse('products:index')}
     else:
         selected_category = get_object_or_404(ProductCategory, id=pk)
+        selected_category_dict = {'name': selected_category.name, 'href': reverse('products:category', args=[selected_category.id])}
     
-    categories = ProductCategory.objects.all()
-    products = Product.objects.filter(category=selected_category)
+    categories = [{'name': c.name, 'href': reverse('products:category', args=[c.id])} for c in ProductCategory.objects.all()]
+    categories = [{'name':'Всё', 'href': reverse('products:index')}, *categories]
+    if selected_category:
+        products = Product.objects.filter(category=selected_category)
+        return render(request, 'mainapp/products_list.html', 
+        context={'title': 'продукты', 
+                'menu_links': MENU_LINKS,
+                'categories': categories,
+                'selected_category': selected_category_dict,
+                'products': products,
+                'cart': cart})
+    else:
+        products = Product.objects.all()
     return render(request, 'mainapp/products.html', 
     context={'title': 'продукты', 
             'menu_links': MENU_LINKS,
             'categories': categories,
-            'selected_category': selected_category,
-            'products': products})
+            'selected_category': selected_category_dict,
+            'products': products,
+            'cart': cart})
