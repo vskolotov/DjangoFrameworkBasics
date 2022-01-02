@@ -3,10 +3,14 @@
     <ul class="menu">
         {% for link in menu_links %}
             <li>
-                <a href="{% url link.view_name %}" 
-                    {% if request.resolver_match.url_name == link.view_name %}
+                <a href="{% url link.full_href %}" 
+                {% with url=request.resolver_match.url_name %}
+                {% with namespace=request.resolver_match.namespace %}
+                    {% if url == link.view_name and namespace == link.namespace %}
                         class="active" 
-                    {% endif %}>                
+                    {% endif %}> 
+                {% endwith %}
+                {% endwith %}                 
                 {{ link.name }}</a>
             </li>
         {% endfor %}
@@ -30,5 +34,9 @@
             </li>
     </ul>
     <a href="#" class="search"></a>
-    <a href="#" class="basket"></a>
+    <a href="{% url 'cart:view' %}" class="basket">
+        <span class="text">
+            {% if cart %} {{ cart|length }} {% endif %}
+        </span>    
+    </a>
 </div>
