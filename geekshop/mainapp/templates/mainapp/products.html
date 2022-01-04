@@ -11,25 +11,25 @@
 
             <div class="details-products">
                 {% if products %}
-                    {% with product=products.0 %}
+
                         <div class="details-slider">
                             <div class="slider-product">
-                                <img src="/media/{{ product.image }}">
+                                <img src="/media/{{ hot_prduct.image }}">
                             </div>
                         </div>
 
                         <div class="description">
-                            <h3 class="big-bold">{{product.name}}</h3>
-                            <h3 class="red">{{product.short_desc}}</h3>
-                            <p class="price"> {{product.price}} <span>руб</span></p>
-                            <a href="#" class="red-button">
+                            <h3 class="big-bold">{{hot_prduct.name}}</h3>
+                            <h3 class="red">{{hot_prduct.short_desc}}</h3>
+                            <p class="price"> {{hot_prduct.price}} <span>руб</span></p>
+                            <a href="{% url 'cart:add' hot_prduct.pk %}" class="red-button">
                                 заказать <i class="fa fa-chevron-right" aria-hidden="true"></i>
                             </a>
                             <div class="description-text">
-                                {{product.description|linebreaks}}
+                                {{hot_prduct.description|linebreaks}}
                             </div>
                         </div>
-                         {% endwith %}
+
                     {% else %}
 
                     <div class="details-slider">
@@ -50,10 +50,10 @@
             <div class="related">
                 <div class="title clearfix">
                     <h2>Похожие продукты</h2>
-                    <a class="explore" href="#">показать все <img src="{% static 'img/arrow.png' %}" alt=""></a>
+                    <a class="explore" href="category/{{hot_prduct.category.id}}">показать все <img src="{% static 'img/arrow.png' %}" alt=""></a>
                 </div>
                 <div class="related-products clearfix">
-                     {% for product in products %}
+                     {% for product in same_products %}
                         <div class="block">                       
                             <a href="#"><img src="/media/{{ product.image }}" alt="{{product.name}}" class="img">
                                 <div class="text">
@@ -69,6 +69,5 @@
             </div>
             {% endif %}
         </div>
-
     {% endblock content %}
     

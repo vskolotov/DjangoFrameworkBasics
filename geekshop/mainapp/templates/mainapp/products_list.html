@@ -1,0 +1,53 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block heder %}
+  <div class="hero-white">
+    <div class="header clearfix">
+      {% include 'mainapp/include/inc_main_menu.html' %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="details">
+    <div class="links clearfix">
+      {% include 'mainapp/include/inc_products_menu.html' %}
+    </div>
+
+    <div class="products_list">
+      <div class="title clearfix">
+        <h2>
+          Категория: "{{ selected_category.name|title }}"
+        </h2>
+      </div>
+      <div class="related-products clearfix">
+{% if products %}
+        {% for product in products %}
+          <div class="block">
+              <a href="{% url 'products:product' product.pk %}">
+                <img src="/media/{{ product.image }}" alt="{{product.name}}" class="img">
+                <div class="text">
+                <img src="{% static 'img/icon-hover.png' %}" alt="hover">
+                  <h4>{{ product.name }}</h4>
+                  <p>{{ product.description }}</p>
+              </div>
+            </a>
+          </div>
+        {% endfor %}  
+  {% else %}
+
+<div class="description">
+    <h3 class="big-bold">В этой категории ничего нет</h3>
+    <div class="description-text">
+        Мы скоро привезем товар
+    </div>
+</div>
+  {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="clr"></div>
+
+{% endblock %}
