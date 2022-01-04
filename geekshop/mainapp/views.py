@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
@@ -26,15 +27,16 @@ MENU_LINKS = [
 ]
 
 def index(request):
- 
+
     related_products = Product.objects.all()[:3]
     return render(request, 'mainapp/index.html', 
     context={'title': 'главная', 
             'menu_links': MENU_LINKS,
-            'related_products': related_products}
-                )           
+            'related_products': related_products,
+            })           
 
 def contact(request):
+
     contacts = [
         {
             'city':'Москва',
@@ -58,9 +60,21 @@ def contact(request):
     return render(request, 'mainapp/contact.html', 
     context={'title': 'контакты', 
             'menu_links': MENU_LINKS,
-            'contacts': contacts})
+            'contacts': contacts,
+            })
+
+def get_hot_product():
+    products = Product.objects.all()
+    return random.choice(list(products))
+
+def get_same_products(hot_product):
+    same_products = Product.objects.filter(category=hot_product.category).exclude(pk=hot_product.pk)[:3]
+    return same_products
 
 def products(request, pk=None):
+
+    hot_product = get_hot_product()
+    same_products = get_same_products(hot_product)
 
     cart = []
     if request.user.is_authenticated:
@@ -81,6 +95,8 @@ def products(request, pk=None):
                 'menu_links': MENU_LINKS,
                 'categories': categories,
                 'selected_category': selected_category_dict,
+                'hot_prduct': hot_product, 
+                'same_products': same_products,
                 'products': products,
                 'cart': cart})
     else:
@@ -90,5 +106,19 @@ def products(request, pk=None):
             'menu_links': MENU_LINKS,
             'categories': categories,
             'selected_category': selected_category_dict,
+            'hot_prduct': hot_product,
+            'same_products': same_products,
             'products': products,
             'cart': cart})
+
+def product(request, pk):
+    categories = [{'name': c.name, 'href': reverse('products:category', args=[c.id])} for c in ProductCategory.objects.all()]
+    categories = [{'name':'Всё', 'href': reverse('products:index')}, *categories]
+    content = {
+        'title': 'продукты', 
+        'product': get_object_or_404(Product, pk=pk),
+        'menu_links': MENU_LINKS,
+        'categories': categories,
+    }
+	
+    return render(request, 'mainapp/product.html', content)

@@ -22,10 +22,10 @@
         </h2>
       </div>
       <div class="related-products clearfix">
-
+{% if products %}
         {% for product in products %}
           <div class="block">
-              <a href="{% url 'cart:add' product.pk %}">
+              <a href="{% url 'products:product' product.pk %}">
                 <img src="/media/{{ product.image }}" alt="{{product.name}}" class="img">
                 <div class="text">
                 <img src="{% static 'img/icon-hover.png' %}" alt="hover">
@@ -34,8 +34,16 @@
               </div>
             </a>
           </div>
-        {% endfor %}
+        {% endfor %}  
+  {% else %}
 
+<div class="description">
+    <h3 class="big-bold">В этой категории ничего нет</h3>
+    <div class="description-text">
+        Мы скоро привезем товар
+    </div>
+</div>
+  {% endif %}
       </div>
     </div>
   </div>
