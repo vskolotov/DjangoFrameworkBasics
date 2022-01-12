@@ -6,10 +6,12 @@ import json, os
 
 JSON_PATH = 'geekshop\mainapp\json'
 
+
 def load_from_json(file_name):
     print(os.getcwd())
     with open(os.path.join(JSON_PATH, file_name + '.json'), 'r', encoding='utf-8') as infile:
         return json.load(infile)
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -18,10 +20,10 @@ class Command(BaseCommand):
         ProductCategory.objects.all().delete()
         for category in categories:
             new_category = ProductCategory(**category)
-            new_category.save()        
-        
+            new_category.save()
+
         products = load_from_json('products')
-        
+
         Product.objects.all().delete()
         for product in products:
             category_name = product["category"]

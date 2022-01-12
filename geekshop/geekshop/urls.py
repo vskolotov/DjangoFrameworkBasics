@@ -28,7 +28,8 @@ urlpatterns = [
     path('products/', include('mainapp.urls', namespace='products')),
     path('auth/', include('authapp.urls', namespace='auth')),
     path('cart/', include('cartapp.urls', namespace='cart')),
-    path('admin/', admin.site.urls),
+    path('admin/', include('adminapp.urls', namespace='admin')),
+    # path('defaunltadmin/', admin.site.urls, name='defaunltadmin'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
