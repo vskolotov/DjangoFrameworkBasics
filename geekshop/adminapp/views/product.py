@@ -4,6 +4,7 @@ from adminapp.forms import ProductEditForm
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
+from django.views.generic.detail import DetailView
 
 
 def products(request, pk):
@@ -41,13 +42,9 @@ def product_create(request, pk):
     return render(request, 'adminapp/product_update.html', content)
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def product_read(request, pk):
-    title = 'продукт/подробнее'
-    product = get_object_or_404(Product, pk=pk)
-    content = {'title': title, 'object': product, }
-
-    return render(request, 'adminapp/product_read.html', content)
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'adminapp/product_read.html'
 
 
 @user_passes_test(lambda u: u.is_superuser)

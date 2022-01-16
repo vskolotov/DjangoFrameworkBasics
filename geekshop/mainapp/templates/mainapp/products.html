@@ -14,19 +14,19 @@
 
                 <div class="details-slider">
                     <div class="slider-product">
-                        <img src="/media/{{ hot_prduct.image }}">
+                        <img src="/media/{{ hot_product.image }}">
                     </div>
                 </div>
 
                 <div class="description">
-                    <h3 class="big-bold">{{ hot_prduct.name }}</h3>
-                    <h3 class="red">{{ hot_prduct.short_desc }}</h3>
-                    <p class="price"> {{ hot_prduct.price }} <span>руб</span></p>
-                    <a href="{% url 'cart:add' hot_prduct.pk %}" class="red-button">
+                    <h3 class="big-bold">{{ hot_product.name }}</h3>
+                    <h3 class="red">{{ hot_product.short_desc }}</h3>
+                    <p class="price"> {{ hot_product.price }} <span>руб</span></p>
+                    <a href="{% url 'cart:add' hot_product.pk %}" class="red-button">
                         заказать <i class="fa fa-chevron-right" aria-hidden="true"></i>
                     </a>
                     <div class="description-text">
-                        {{ hot_prduct.description|linebreaks }}
+                        {{ hot_product.description|linebreaks }}
                     </div>
                 </div>
 
@@ -50,13 +50,14 @@
             <div class="related">
                 <div class="title clearfix">
                     <h2>Похожие продукты</h2>
-                    <a class="explore" href="category/{{ hot_prduct.category.id }}">показать все <img
+                    <a class="explore" href="category/{{ hot_product.category.id }}">показать все <img
                             src="{% static 'img/arrow.png' %}" alt=""></a>
                 </div>
                 <div class="related-products clearfix">
                     {% for product in same_products %}
                         <div class="block">
-                            <a href="#"><img src="/media/{{ product.image }}" alt="{{ product.name }}" class="img">
+                            <a href="{% url 'products:product' product.pk %}"><img src="/media/{{ product.image }}"
+                                                                                   alt="{{ product.name }}" class="img">
                                 <div class="text">
                                     <img src="{% static 'img/icon-hover.png' %}" alt="img">
                                     <h4>{{ product.name }}</h4>

@@ -15,7 +15,7 @@ html, body {
 }
 
 .clr {
-    height: 384px;
+    height: 300px;
 }
 
 .container {
@@ -417,7 +417,7 @@ html, body {
 
 .title h2 {
     float: left;
-    margin-top: 118px;
+    margin-top: 50px;
     color: #212121;
     font-size: 36px;
     font-weight: 700;

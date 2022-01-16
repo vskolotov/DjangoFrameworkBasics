@@ -2,40 +2,45 @@ from authapp.models import ShopUser
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import HttpResponseRedirect
-from django.urls import reverse
-from authapp.forms import ShopUserRegisterForm
+from django.urls import reverse, reverse_lazy
 from adminapp.forms import ShopUserAdminEditForm
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView
+from django.utils.decorators import method_decorator
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def users(request):
-    title = 'админка/пользователи'
+class UsersListView(ListView):
+    model = ShopUser
+    template_name = 'adminapp/users.html'
 
-    users_list = ShopUser.objects.all().order_by('-is_active', '-is_superuser', '-is_staff', 'username')
-
-    content = {
-        'title': title,
-        'objects': users_list
-    }
-
-    return render(request, 'adminapp/users.html', content)
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def user_create(request):
-    title = 'пользователи/создание'
+class UsersCreateView(CreateView):
+    model = ShopUser
+    template_name = 'adminapp/user_update.html'
+    success_url = reverse_lazy('admin:users')
+    fields = '__all__'
 
-    if request.method == 'POST':
-        user_form = ShopUserRegisterForm(request.POST, request.FILES)
-        if user_form.is_valid():
-            user_form.save()
-            return HttpResponseRedirect(reverse('admin:users'))
-    else:
-        user_form = ShopUserRegisterForm()
 
-    content = {'title': title, 'update_form': user_form}
 
-    return render(request, 'adminapp/user_update.html', content)
+# @user_passes_test(lambda u: u.is_superuser)
+# def user_create(request):
+#     title = 'пользователи/создание'
+#
+#     if request.method == 'POST':
+#         user_form = ShopUserRegisterForm(request.POST, request.FILES)
+#         if user_form.is_valid():
+#             user_form.save()
+#             return HttpResponseRedirect(reverse('admin:users'))
+#     else:
+#         user_form = ShopUserRegisterForm()
+#
+#     content = {'title': title, 'update_form': user_form}
+#
+#     return render(request, 'adminapp/user_update.html', content)
 
 
 @user_passes_test(lambda u: u.is_superuser)
