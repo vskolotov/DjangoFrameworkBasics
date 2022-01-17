@@ -78,9 +78,6 @@ def products(request, pk=None, page=1):
     hot_product = get_hot_product()
     same_products = get_same_products(hot_product)
 
-    cart = []
-    if request.user.is_authenticated:
-        cart = Cart.objects.filter(user=request.user)
     if not pk:
         selected_category = None
         selected_category_dict = {'name': 'Всё', 'href': reverse('products:index')}
@@ -92,7 +89,6 @@ def products(request, pk=None, page=1):
     categories = [{'name': c.name, 'href': reverse('products:category', args=[c.id])} for c in
                   ProductCategory.objects.filter(is_active=True)]
     categories = [{'name': 'Всё', 'href': reverse('products:index')}, *categories]
-
 
     if selected_category:
         products = Product.objects.filter(category=selected_category,
@@ -113,10 +109,10 @@ def products(request, pk=None, page=1):
                                'categories': categories,
                                'selected_category': selected_category_dict,
                                'hot_product': hot_product,
-                               'pk':pk,
+                               'pk': pk,
                                'same_products': same_products,
                                'products': products_paginator,
-                               'cart': cart})
+                               })
     else:
         products = Product.objects.all()
     return render(request, 'mainapp/products.html',
@@ -127,7 +123,7 @@ def products(request, pk=None, page=1):
                            'hot_product': hot_product,
                            'same_products': same_products,
                            'products': products,
-                           'cart': cart})
+                           })
 
 
 def product(request, pk):
