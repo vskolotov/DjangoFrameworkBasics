@@ -29,6 +29,7 @@ urlpatterns = [
     path('auth/', include('authapp.urls', namespace='auth')),
     path('cart/', include('cartapp.urls', namespace='cart')),
     path('admin/', include('adminapp.urls', namespace='admin')),
+    path('', include('social_django.urls', namespace='social')),
     # path('defaunltadmin/', admin.site.urls, name='defaunltadmin'),
 ]
 if settings.DEBUG:
