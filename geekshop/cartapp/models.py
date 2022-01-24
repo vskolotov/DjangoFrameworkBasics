@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from mainapp.models import Product
 
+
 class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cart')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -26,3 +27,7 @@ class Cart(models.Model):
         _items = Cart.objects.filter(user=self.user)
         _totalcost = sum(list(map(lambda x: x.product_cost, _items)))
         return _totalcost
+
+    @classmethod
+    def get_items(cls, user):
+        return Cart.objects.filter(user=user)

@@ -4,7 +4,7 @@ from adminapp.forms import ProductEditForm
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
-from django.views.generic.detail import DetailView
+from django.views.generic import DetailView
 
 
 def products(request, pk):
