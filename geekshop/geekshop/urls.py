@@ -19,14 +19,19 @@ from django.urls.resolvers import URLPattern
 from mainapp import views as mainapp_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import include
 
 
 urlpatterns = [
     path('', mainapp_views.index, name='index'),
     path('contact', mainapp_views.contact, name='contact'),
-    path('products/', mainapp_views.products, name='products_index'),
-    path('products/<int:pk>', mainapp_views.products, name='products'),
-    path('admin/', admin.site.urls),
+    path('products/', include('mainapp.urls', namespace='products')),
+    path('auth/', include('authapp.urls', namespace='auth')),
+    path('cart/', include('cartapp.urls', namespace='cart')),
+    path('admin/', include('adminapp.urls', namespace='admin')),
+    path('order/', include('ordersapp.urls', namespace='order')),
+    path('', include('social_django.urls', namespace='social')),
+    # path('defaunltadmin/', admin.site.urls, name='defaunltadmin'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

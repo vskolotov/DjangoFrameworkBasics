@@ -3,14 +3,67 @@
     <ul class="menu">
         {% for link in menu_links %}
             <li>
-                <a href="{% url link.view_name %}" 
-                    {% if request.resolver_match.url_name == link.view_name %}
-                        class="active" 
-                    {% endif %}>                
+                <a href="{% url link.full_href %}"
+                        {% with url=request.resolver_match.url_name %}
+                            {% with namespace=request.resolver_match.namespace %}
+                                {% if url == link.view_name and namespace == link.namespace %}
+                   class="active"
+                                {% endif %}>
+                            {% endwith %}
+                        {% endwith %}
                 {{ link.name }}</a>
             </li>
         {% endfor %}
+        {% if user.is_authenticated %}
+            <li>
+                <div class="dropdown">
+                    <a class="dropdown-toggle" href="" data-toggle="dropdown">
+                        {{ user.first_name|default:'Пользователь' }}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="{% url 'auth:edit' %}">
+                                профиль
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'ordersapp:orders_list' %}">
+                                заказы
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        {% endif %}
+
+        {% if user.is_superuser %}
+            <li>
+                <a href="{% url 'admin:users' %}">админка</a>
+            </li>
+        {% endif %}
+
+        <li>
+            {% if user.is_authenticated %}
+                <a href="{% url 'auth:logout' %}">выйти</a>
+            {% else %}
+                <a href="{% url 'auth:login' %}">войти</a>
+                <a href="{% url 'auth:register' %}">Регистрация</a>
+            {% endif %}
+        </li>
+        <li>
+            <a href="#" class="search"></a>
+        </li>
+        <li>
+            <a href="{% url 'cart:view' %}" class="cart">
+        <span class="text">
+            {% if cart %}
+                {{ cart.0.total_cost|floatformat:0 }} руб
+                ({{ cart.0.total_quantity }} шт)
+            {% endif %}
+        </span>
+            </a>
+        </li>
     </ul>
-    <a href="#" class="search"></a>
-    <a href="#" class="basket"></a>
+
 </div>
