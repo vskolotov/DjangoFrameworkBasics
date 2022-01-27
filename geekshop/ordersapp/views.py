@@ -1,12 +1,9 @@
 from django.shortcuts import get_object_or_404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.db import transaction
-
 from django.forms import inlineformset_factory
-
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
-
 from cartapp.models import Cart
 from ordersapp.models import Order, OrderItem
 from ordersapp.forms import OrderItemForm
@@ -38,6 +35,7 @@ class OrderItemsCreate(CreateView):
                 for num, form in enumerate(formset.forms):
                     form.initial['product'] = cart_items[num].product
                     form.initial['quantity'] = cart_items[num].quantity
+                    form.initial['price'] = cart_items[num].product.price
                 cart_items.delete()
             else:
                 formset = OrderFormSet()
@@ -75,14 +73,10 @@ class OrderItemsUpdate(UpdateView):
         if self.request.POST:
             formset = OrderFormSet(self.request.POST, instance=self.object)
         else:
-            cart_items = Cart.get_items(self.request.user)
-            if len(cart_items):
-                OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=len(cart_items))
-                formset = OrderFormSet(instance=self.object)
-
-                cart_items.delete()
-            else:
-                formset = OrderFormSet(instance=self.object)
+            formset = OrderFormSet(instance=self.object)
+            for form in formset.forms:
+                if form.instance.pk:
+                    form.initial['price'] = form.instance.product.price
 
         data['orderitems'] = formset
         return data

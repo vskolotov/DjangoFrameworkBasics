@@ -52,8 +52,10 @@
             {% endif %}
         </li>
         <li>
-            {#            <a href="#" class="search"></a>#}
-            <a href="{% url 'cart:view' %}" class="basket">
+            <a href="#" class="search"></a>
+        </li>
+        <li>
+            <a href="{% url 'cart:view' %}" class="cart">
         <span class="text">
             {% if cart %}
                 {{ cart.0.total_cost|floatformat:0 }} руб

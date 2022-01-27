@@ -1,7 +1,9 @@
 from django.db import models
-
 from django.conf import settings
 from mainapp.models import Product
+from django.dispatch import receiver
+from django.db.models.signals import pre_save, pre_delete
+from cartapp.models import Cart
 
 
 class Order(models.Model):
@@ -72,3 +74,21 @@ class OrderItem(models.Model):
 
     def get_product_cost(self):
         return self.product.price * self.quantity
+
+
+@receiver(pre_save, sender=OrderItem)
+@receiver(pre_save, sender=Cart)
+def product_quantity_update_save(sender, update_fields, instance, **kwargs):
+    if update_fields is 'quantity' or 'product':
+        if instance.pk:
+            instance.product.quantity -= instance.quantity - sender.objects.get(pk=instance.pk).quantity
+        else:
+            instance.product.quantity -= instance.quantity
+        instance.product.save()
+
+
+@receiver(pre_delete, sender=OrderItem)
+@receiver(pre_delete, sender=Cart)
+def product_quantity_update_delete(sender, instance, **kwargs):
+    instance.product.quantity += instance.quantity
+    instance.product.save()
